@@ -2,6 +2,8 @@
 My completely from scratch system for converting videos to Desmos animations. 
 Currently under construction. Very hands-on usability currently.
 
+Here is an example of a final product: https://www.youtube.com/watch?v=PrwHFElKx7U 
+
 This program can be used by performing the following steps:
 
 Setup:
