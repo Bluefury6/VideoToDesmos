@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video to Desmos</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.desmos.com/api/v1.8/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+
+</head>
+<body style="margin: 0;">
+    <input id="threshhold" value="5" min="0" max="255" step="1">
+    <input type="button" id="run" value="Run" onclick="extractVideoFrames()">
+    <input type="button" id="replay" value="replay" onclick="replayVideo()">
+    
+    <canvas id="canvas"></canvas>
+    <div id="videoContainer"></div>
+    <div id="calculator" style="width: 2000px; height: 1000px;"></div>
+
+    <script src="EdgeDetection.js"></script>
+</body>
+</html>
