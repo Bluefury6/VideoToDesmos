@@ -14,7 +14,7 @@ frame_number = 1
 video = "test_videos\\Neuvillette_Demo.mp4"
 capture = cv2.VideoCapture(video)
 
-fps = capture.get(cv2.CAP_PROP_FPS)
+fps = 1#capture.get(cv2.CAP_PROP_FPS)
 frame_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
 print("total frame count:", frame_count)
 
@@ -36,7 +36,7 @@ def initialize():
     global frame_number
 
     capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number - 1)
-    frame_number += 1
+    frame_number += 1000
 
     ret, frame = capture.read()
 
@@ -74,8 +74,8 @@ def compileToPoints(frame):
                 pointsX = []
                 pointsY = []
 
-            pointSet['x'].append(str(pointsX))
-            pointSet['y'].append(str(pointsY))
+    pointSet['x'].append(str(pointsX))
+    pointSet['y'].append(str(pointsY))
 
     print("pixels ready for graphing")
     return pointSet
