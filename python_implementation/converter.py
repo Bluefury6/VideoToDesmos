@@ -32,6 +32,7 @@ CORS(app)
 
 @app.route('/initialize', methods=['POST'])
 def initialize():
+    print("\n\n")
     global frame_number
 
     capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number - 1)
@@ -43,6 +44,8 @@ def initialize():
         print("Error loading frame")
         output_video.release()
         return send_file(output_path, as_attachment=True)
+
+    print("loading frame", frame_number)
 
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -57,7 +60,7 @@ def compileToPoints(frame):
     pointSet = {'x': [], 'y': []}
     pointsX = []
     pointsY = []
-    print(len(frame)*len(frame[0]))
+    print("analyzing pixels")
 
     for y in range(len(frame)):
         for x in range(len(frame[y])):
@@ -70,12 +73,11 @@ def compileToPoints(frame):
                 pointSet['y'].append(str(pointsY))
                 pointsX = []
                 pointsY = []
-                # break
 
-            # if len(pointSet['x']) > 1:
-                # break
+            pointSet['x'].append(str(pointsX))
+            pointSet['y'].append(str(pointsY))
 
-    # print(pointSet)
+    print("pixels ready for graphing")
     return pointSet
 
 
@@ -105,6 +107,7 @@ def end_recording():
 def process_payload():
     data = request.get_json()
     url = data['image']
+    global frame_number
 
     _, image_data = url.split(';base64,')
     img_binary = base64.b64decode(image_data)
@@ -112,6 +115,7 @@ def process_payload():
     img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     output_video.write(img_np)
+    print("frame", frame_number, "compiled to video")
 
     return jsonify(frame_number)
 
