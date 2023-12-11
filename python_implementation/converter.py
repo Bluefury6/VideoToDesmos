@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import cv2
 import numpy as np
@@ -16,11 +16,12 @@ capture = cv2.VideoCapture(video)
 
 fps = capture.get(cv2.CAP_PROP_FPS)
 frame_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
+print("total frame count:", frame_count)
 
 width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-output_path = 'result\\neuvillette.mp4'
+output_path = 'test_videos\\neuvillette_conversion.mp4'
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 output_video = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
@@ -40,7 +41,8 @@ def initialize():
 
     if not ret:
         print("Error loading frame")
-        # break
+        output_video.release()
+        return send_file(output_path, as_attachment=True)
 
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -52,19 +54,29 @@ def initialize():
 
 
 def compileToPoints(frame):
-    points = []
+    pointSet = {'x': [], 'y': []}
+    pointsX = []
+    pointsY = []
     print(len(frame)*len(frame[0]))
 
     for y in range(len(frame)):
         for x in range(len(frame[y])):
             if frame[y][x][0] == 255:
-                points.append(f"({x}, {len(frame) - y})")
+                pointsX.append(x)
+                pointsY.append(len(frame) - y)
 
-            if len(points) == 9999:
-                break
+            if len(pointsX) == 9999:
+                pointSet['x'].append(str(pointsX))
+                pointSet['y'].append(str(pointsY))
+                pointsX = []
+                pointsY = []
+                # break
 
-    print(len(points))
-    return ", ".join(points)
+            # if len(pointSet['x']) > 1:
+                # break
+
+    # print(pointSet)
+    return pointSet
 
 
 
@@ -81,21 +93,27 @@ def loadImageForFrontend(frame):
 
 
 
-@app.route('/delete_windows', methods=['POST'])
-def close_windows():
-    cv2.destroyAllWindows()
+@app.route('/end_recording', methods=['POST'])
+def end_recording():
+    output_video.release()
 
-    return jsonify("windows destroyed")
+    return send_file(output_path, as_attachment=True)
 
 
 
 @app.route('/process_new_frame', methods=['POST'])
 def process_payload():
     data = request.get_json()
+    url = data['image']
 
-    
+    _, image_data = url.split(';base64,')
+    img_binary = base64.b64decode(image_data)
+    nparr = np.frombuffer(img_binary, np.uint8)
+    img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    return jsonify("frame loaded")
+    output_video.write(img_np)
+
+    return jsonify(frame_number)
 
 if __name__ == '__main__':
     app.run(debug=True)

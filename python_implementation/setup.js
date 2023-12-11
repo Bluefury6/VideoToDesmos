@@ -1,7 +1,9 @@
 const elt = document.getElementById('calculator');
 const calculator = Desmos.GraphingCalculator(elt, {lockViewport: true, expressions: false, settingsMenu: false});
-let i = 0;
 const videoSource = "..\\test_videos\\Neuvillette_Demo.mp4";
+
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
 
 const init = () => {
     let video = document.createElement("video");
@@ -52,6 +54,8 @@ const init = () => {
             bottom: -height*0.1,
             top: height*1.1
         });
+
+        calculatorBlankState = calculator.getState();
     });
 }
 
@@ -64,6 +68,9 @@ const run = () => {
     })
     .then(response => response.json())
     .then(data => {
+        if (data["image"] === "video complete") {
+            return null;
+        }
         // console.log('Response:', data);
         loadFrame(data);
         //run();
@@ -74,32 +81,45 @@ const run = () => {
 }
 
 const loadFrame = (frame) => {
-    i++;
-    calculator.setExpression({id: "points" + i, latex: `[${frame['image']}]`, color: "rgb(0, 50, 150)", pointSize: "2", pointOpacity: "1", secret: true, lines: false, lineWidth: 1, lineOpacity: true});
+    calculator.setState(calculatorBlankState)
+    console.log(frame['image'])
+    for (let j = 0; j < frame['image']['x'].length; j++) {
+        calculator.setExpression({id: "points" + j, latex: "(" + frame['image']['x'][j] + ", " + frame['image']['y'][j] + ")", color: "rgb(0, 0, 111)", pointSize: "2", pointOpacity: "1", secret: true, lines: false, lineWidth: 1, lineOpacity: 1});
+    }
     calculator.asyncScreenshot(returnFrame);
 }
 
 const returnFrame = (frame) => {
-    fetch('http://localhost:5000/process_new_frame', {
+    image = new Image();
+    image.src = frame;
+    image.onload = () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        ctx.drawImage(image, 0, 0);
+
+        fetch('http://localhost:5000/process_new_frame', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         }, 
-        body: JSON.stringify(frame)
-    })
-    .then(response => response.json())
-    .then(data => {
-        // console.log('Response:', data);
-        loadFrame(data);
-        //run();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+        body: JSON.stringify({image: canvas.toDataURL('image/jpeg')})
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Frame recieved');
+            console.log(data)
+            // loadFrame(data);
+            run();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
 }
 
-const closeWindows = () => {
-    fetch('http://localhost:5000/delete_windows', {
+const finishRecording = () => {
+    fetch('http://localhost:5000/end_recording', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
