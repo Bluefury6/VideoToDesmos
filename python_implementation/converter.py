@@ -14,14 +14,14 @@ frame_number = 1
 video = "test_videos\\Neuvillette_Demo.mp4"
 capture = cv2.VideoCapture(video)
 
-fps = 1#capture.get(cv2.CAP_PROP_FPS)
+fps = capture.get(cv2.CAP_PROP_FPS)
 frame_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
 print("total frame count:", frame_count)
 
 width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-output_path = 'test_videos\\neuvillette_conversion.mp4'
+output_path = 'test_videos\\converted_video.mp4'
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 output_video = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
@@ -36,7 +36,7 @@ def initialize():
     global frame_number
 
     capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number - 1)
-    frame_number += 1000
+    frame_number += 1
 
     ret, frame = capture.read()
 
@@ -49,7 +49,7 @@ def initialize():
 
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    edged_frame = cv2.Canny(grayscale, 50, 50)
+    edged_frame = cv2.Canny(grayscale, 45, 50)
     frame = cv2.cvtColor(edged_frame, cv2.COLOR_GRAY2BGR)
 
     return jsonify({"image": compileToPoints(frame)})
