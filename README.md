@@ -1,5 +1,5 @@
 # VideoToDesmos
-My completely from scratch system for converting videos to Desmos animations. 
+My system for converting videos to Desmos animations. 
 Currently under construction. Very hands-on usability currently.
 
 Here is an example of a final product: https://www.youtube.com/watch?v=PrwHFElKx7U 
