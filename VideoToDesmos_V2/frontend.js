@@ -1,6 +1,6 @@
 const elt = document.getElementById('calculator');
 const calculator = Desmos.GraphingCalculator(elt, {lockViewport: true, expressions: false, settingsMenu: false});
-const videoSource = "..\\test_videos\\Neuvillette_Demo.mp4";
+const videoSource = "..\\test_videos\\FurinaDemo.mp4";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -71,9 +71,7 @@ const run = () => {
         if (data["image"] === "video complete") {
             return null;
         }
-        // console.log('Response:', data);
         loadFrame(data);
-        //run();
     })
     .catch(error => {
         console.error('Error:', error);
@@ -84,7 +82,7 @@ const loadFrame = (frame) => {
     calculator.setState(calculatorBlankState)
     console.log(frame['image'])
     for (let j = 0; j < frame['image']['x'].length; j++) {
-        calculator.setExpression({id: "points" + j, latex: "(" + frame['image']['x'][j] + ", " + frame['image']['y'][j] + ")", color: "rgb(0, 0, 111)", pointSize: "2", pointOpacity: "1", secret: true, lines: false, lineWidth: 1, lineOpacity: 1});
+        calculator.setExpression({id: "points" + j, latex: "([" + frame['image']['x'][j] + "], [" + frame['image']['y'][j] + "])", color: "rgb(0, 0, 111)", pointSize: "2", pointOpacity: "1", secret: true, lines: false, lineWidth: 1, lineOpacity: 1});
     }
     calculator.asyncScreenshot(returnFrame);
 }
@@ -109,8 +107,7 @@ const returnFrame = (frame) => {
         .then(data => {
             console.log('Frame recieved');
             console.log(data)
-            // loadFrame(data);
-            run();
+            // run();
         })
         .catch(error => {
             console.error('Error:', error);

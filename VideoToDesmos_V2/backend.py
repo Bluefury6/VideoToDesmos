@@ -11,7 +11,7 @@ capture = None
 frames = []
 
 frame_number = 1
-video = "test_videos\\Neuvillette_Demo.mp4"
+video = "test_videos\\FurinaDemo.mp4"
 capture = cv2.VideoCapture(video)
 
 fps = capture.get(cv2.CAP_PROP_FPS)
@@ -42,14 +42,14 @@ def initialize():
 
     if not ret:
         print("Error loading frame")
-        output_video.release()
-        return send_file(output_path, as_attachment=True)
+        frame_number -= 1
+        return jsonify({"image": {'x': [[]], 'y': [[]]}})
 
     print("loading frame", frame_number)
 
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    edged_frame = cv2.Canny(grayscale, 45, 50)
+    edged_frame = cv2.Canny(grayscale, 40, 45)
     frame = cv2.cvtColor(edged_frame, cv2.COLOR_GRAY2BGR)
 
     return jsonify({"image": compileToPoints(frame)})
@@ -57,25 +57,34 @@ def initialize():
 
 
 def compileToPoints(frame):
-    pointSet = {'x': [], 'y': []}
-    pointsX = []
-    pointsY = []
-    print("analyzing pixels")
+    frame = np.array(frame)
+    print("analyzing", len(frame)*len(frame[0]), "pixels")
+    edge_pixels = np.argwhere(frame[:, :, 0] == 255)
+    print(len(edge_pixels), "edge pixels detected")
 
-    for y in range(len(frame)):
-        for x in range(len(frame[y])):
-            if frame[y][x][0] == 255:
-                pointsX.append(x)
-                pointsY.append(len(frame) - y)
+    pointSet = {
+        'x': [edge_pixels[:, 1].tolist()[i:i + 9999] for i in range(0, len(edge_pixels[:, 1].tolist()), 9999)], 
+        'y': [(len(frame) - edge_pixels[:, 0]).tolist()[i:i + 9999] for i in range(0, len((len(frame) - edge_pixels[:, 0]).tolist()), 9999)]
+    }
 
-            if len(pointsX) == 9999:
-                pointSet['x'].append(str(pointsX))
-                pointSet['y'].append(str(pointsY))
-                pointsX = []
-                pointsY = []
+    # pointSet = {'x': [], 'y': []}
+    # pointsX = []
+    # pointsY = []
+    
+    # for y in range(len(frame)):
+    #     for x in range(len(frame[y])):
+    #         if frame[y][x][0] == 255:
+    #             pointsX.append(x)
+    #             pointsY.append(len(frame) - y)
 
-    pointSet['x'].append(str(pointsX))
-    pointSet['y'].append(str(pointsY))
+    #         if len(pointsX) == 9999:
+    #             pointSet['x'].append(str(pointsX))
+    #             pointSet['y'].append(str(pointsY))
+    #             pointsX = []
+    #             pointsY = []
+
+    # pointSet['x'].append(str(pointsX))
+    # pointSet['y'].append(str(pointsY))
 
     print("pixels ready for graphing")
     return pointSet
