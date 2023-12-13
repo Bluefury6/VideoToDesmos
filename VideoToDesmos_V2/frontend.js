@@ -71,9 +71,7 @@ const run = () => {
         if (data["image"] === "video complete") {
             return null;
         }
-        // console.log('Response:', data);
         loadFrame(data);
-        //run();
     })
     .catch(error => {
         console.error('Error:', error);
@@ -109,8 +107,7 @@ const returnFrame = (frame) => {
         .then(data => {
             console.log('Frame recieved');
             console.log(data)
-            // loadFrame(data);
-            run();
+            // run();
         })
         .catch(error => {
             console.error('Error:', error);

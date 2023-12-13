@@ -42,8 +42,8 @@ def initialize():
 
     if not ret:
         print("Error loading frame")
-        output_video.release()
-        return send_file(output_path, as_attachment=True)
+        frame_number -= 1
+        return jsonify({"image": {'x': [[]], 'y': [[]]}})
 
     print("loading frame", frame_number)
 
@@ -65,11 +65,12 @@ def compileToPoints(frame):
     pointSet = {
         'x': [edge_pixels[:, 1].tolist()[i:i + 9999] for i in range(0, len(edge_pixels[:, 1].tolist()), 9999)], 
         'y': [(len(frame) - edge_pixels[:, 0]).tolist()[i:i + 9999] for i in range(0, len((len(frame) - edge_pixels[:, 0]).tolist()), 9999)]
-        }
+    }
 
+    # pointSet = {'x': [], 'y': []}
     # pointsX = []
     # pointsY = []
-
+    
     # for y in range(len(frame)):
     #     for x in range(len(frame[y])):
     #         if frame[y][x][0] == 255:
