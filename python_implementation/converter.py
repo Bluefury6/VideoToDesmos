@@ -10,7 +10,7 @@ video = None
 capture = None
 frames = []
 
-frame_number = 450
+frame_number = 1
 video = "test_videos\\FurinaDemo.mp4"
 capture = cv2.VideoCapture(video)
 
