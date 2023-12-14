@@ -107,7 +107,7 @@ const returnFrame = (frame) => {
         .then(data => {
             console.log('Frame recieved');
             console.log(data)
-            // run();
+            run();
         })
         .catch(error => {
             console.error('Error:', error);
