@@ -5,6 +5,8 @@ const videoSource = "..\\test_videos\\FurinaDemo.mp4";
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
+let image = new Image();
+
 const init = () => {
     let video = document.createElement("video");
     video.src = videoSource;
@@ -69,6 +71,7 @@ const run = () => {
     .then(response => response.json())
     .then(data => {
         if (data["image"] === "video complete") {
+            finishRecording();
             return null;
         }
         loadFrame(data);
@@ -79,8 +82,9 @@ const run = () => {
 }
 
 const loadFrame = (frame) => {
-    calculator.setState(calculatorBlankState)
-    console.log(frame['image'])
+    calculator.setState(calculatorBlankState);
+    calculator.clearHistory();
+    console.log(frame['image']);
     for (let j = 0; j < frame['image']['x'].length; j++) {
         calculator.setExpression({id: "points" + j, latex: "([" + frame['image']['x'][j] + "], [" + frame['image']['y'][j] + "])", color: "rgb(0, 0, 111)", pointSize: "2", pointOpacity: "1", secret: true, lines: false, lineWidth: 1, lineOpacity: 1});
     }
@@ -88,7 +92,6 @@ const loadFrame = (frame) => {
 }
 
 const returnFrame = (frame) => {
-    image = new Image();
     image.src = frame;
     image.onload = () => {
         canvas.width = image.width;

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import cv2
 import numpy as np
@@ -11,6 +11,7 @@ capture = None
 frames = []
 
 frame_number = 1
+deltaFrame = 1
 video = "test_videos\\FurinaDemo.mp4"
 capture = cv2.VideoCapture(video)
 
@@ -36,14 +37,14 @@ def initialize():
     global frame_number
 
     capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number - 1)
-    frame_number += 1
+    frame_number += deltaFrame
 
     ret, frame = capture.read()
 
     if not ret:
         print("Error loading frame")
-        frame_number -= 1
-        return jsonify({"image": {'x': [[]], 'y': [[]]}})
+        frame_number -= deltaFrame
+        return jsonify({"image": "video complete"})#jsonify({"image": {'x': [[]], 'y': [[]]}})
 
     print("loading frame", frame_number)
 
@@ -108,7 +109,7 @@ def loadImageForFrontend(frame):
 def end_recording():
     output_video.release()
 
-    return send_file(output_path, as_attachment=True)
+    return Flask.send_file(output_path, as_attachment=True)
 
 
 
