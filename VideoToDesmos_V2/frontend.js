@@ -73,11 +73,15 @@ const run = () => {
         if (data["image"] === "video complete") {
             finishRecording();
             return null;
+        } else if (data["image"] === "error") {
+            run();
+        } else {
+            loadFrame(data);
         }
-        loadFrame(data);
     })
     .catch(error => {
         console.error('Error:', error);
+        run();
     });
 }
 
@@ -114,6 +118,7 @@ const returnFrame = (frame) => {
         })
         .catch(error => {
             console.error('Error:', error);
+            returnFrame(frame);
         });
     }
 }
