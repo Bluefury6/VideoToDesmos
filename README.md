@@ -2,10 +2,7 @@
 My system for converting videos to Desmos animations. 
 Currently under construction. Very hands-on usability currently.
 
-Here is an example of a final product: https://www.youtube.com/watch?v=PrwHFElKx7U 
-This was rendered on the as-of-now deprecated javascript exclusive implementation.
-The "jittering" present throughout this example video has been corrected.
-The example video will be updated shortly.
+Here is an example of a final product: [https://www.youtube.com/watch?v=PrwHFElKx7U](https://youtu.be/SXUkZxaTs0g) 
 
 This program can be used by performing the following steps:
 
