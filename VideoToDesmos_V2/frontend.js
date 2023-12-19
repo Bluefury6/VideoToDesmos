@@ -1,6 +1,7 @@
 const elt = document.getElementById('calculator');
 const calculator = Desmos.GraphingCalculator(elt, {lockViewport: true, expressions: false, settingsMenu: false});
-const videoSource = "..\\test_videos\\FurinaDemo.mp4";
+const videoSource = "..\\test_videos\\<insert video name here>.mp4";
+graphColor = "rgb(0, 0, 0)";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -88,9 +89,9 @@ const run = () => {
 const loadFrame = (frame) => {
     calculator.setState(calculatorBlankState);
     calculator.clearHistory();
-    console.log(frame['image']);
+    //console.log(frame['image']);
     for (let j = 0; j < frame['image']['x'].length; j++) {
-        calculator.setExpression({id: "points" + j, latex: "([" + frame['image']['x'][j] + "], [" + frame['image']['y'][j] + "])", color: "rgb(0, 0, 111)", pointSize: "2", pointOpacity: "1", secret: true, lines: false, lineWidth: 1, lineOpacity: 1});
+        calculator.setExpression({id: "points" + j, latex: "([" + frame['image']['x'][j] + "], [" + frame['image']['y'][j] + "])", color: graphColor, pointSize: "2", pointOpacity: "1", secret: true, lines: false, lineWidth: 1, lineOpacity: 1});
     }
     calculator.asyncScreenshot(returnFrame);
 }
@@ -112,7 +113,7 @@ const returnFrame = (frame) => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Frame recieved');
+            //console.log('Frame recieved');
             console.log(data)
             run();
         })

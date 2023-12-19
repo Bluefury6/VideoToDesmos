@@ -10,14 +10,14 @@ video = None
 capture = None
 frames = []
 
-frame_number = 5903
+frame_number = 1
 deltaFrame = 1
-video = "test_videos\\AlhaithamDemo.mp4"
+video = "test_videos\\<insert video name here>.mp4"
 capture = cv2.VideoCapture(video)
 
 fps = capture.get(cv2.CAP_PROP_FPS)
 frame_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
-print("total frame count:", frame_count)
+print("total frame count:", frame_count, "\nfps count:", fps)
 
 width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -44,13 +44,13 @@ def initialize():
     if not ret:
         print("Error loading frame")
         frame_number -= deltaFrame
-        return jsonify({"image": "error"})#jsonify({"image": {'x': [[]], 'y': [[]]}})
+        return jsonify({"image": "video complete"}) #"error" to retry, "video complete" to end
 
     print("loading frame", frame_number)
 
     #grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    edged_frame = cv2.Canny(frame, 40, 45)
+    edged_frame = cv2.Canny(frame, 50, 100)
     frame = cv2.cvtColor(edged_frame, cv2.COLOR_GRAY2BGR)
 
     return jsonify({"image": compileToPoints(frame)})
