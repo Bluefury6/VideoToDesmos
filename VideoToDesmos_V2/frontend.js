@@ -1,7 +1,7 @@
 const elt = document.getElementById('calculator');
 const calculator = Desmos.GraphingCalculator(elt, {lockViewport: true, expressions: false, settingsMenu: false});
-const videoSource = "..\\test_videos\\<insert video name here>.mp4";
-graphColor = "rgb(0, 0, 0)";
+const videoSource = "..\\test_videos\\Story Teaser_ La vaguelette _ Genshin Impact.mp4";
+graphColor = "rgb(0, 0, 111)";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");

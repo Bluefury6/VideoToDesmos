@@ -5,12 +5,16 @@ import numpy as np
 from PIL import Image
 import io
 import base64
+from time import time;
+
+startTime = time();
+currentTime = time();
 
 video = None
 capture = None
 frames = []
 
-frame_number = 1
+frame_number = 0
 deltaFrame = 1
 video = "test_videos\\<insert video name here>.mp4"
 capture = cv2.VideoCapture(video)
@@ -22,7 +26,7 @@ print("total frame count:", frame_count, "\nfps count:", fps)
 width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-output_path = 'test_videos\\converted_video.mp4'
+output_path = 'test_videos\\output.mp4'
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 output_video = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
@@ -35,6 +39,7 @@ CORS(app)
 def initialize():
     print("\n\n")
     global frame_number
+    global currentTime
 
     capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number - 1)
     frame_number += deltaFrame
@@ -46,11 +51,16 @@ def initialize():
         frame_number -= deltaFrame
         return jsonify({"image": "video complete"}) #"error" to retry, "video complete" to end
 
-    print("loading frame", frame_number)
+    currentTime = time();
+    deltaTime = currentTime - startTime
+    projectedTime = (deltaTime / 3600)/(frame_number / frame_count)
+
+    print(f"loading frame {frame_number} of {frame_count}, approx. {100*frame_number / frame_count}% complete.")
+    print(f"Elapsed Time: {deltaTime / 3600} hours. Projected total: {int(projectedTime)} hours {projectedTime % 1} minutes")
 
     #grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    edged_frame = cv2.Canny(frame, 50, 100)
+    edged_frame = cv2.Canny(frame, 50, 60)
     frame = cv2.cvtColor(edged_frame, cv2.COLOR_GRAY2BGR)
 
     return jsonify({"image": compileToPoints(frame)})
@@ -60,32 +70,13 @@ def initialize():
 def compileToPoints(frame):
     frame = np.array(frame)
     print("analyzing", len(frame)*len(frame[0]), "pixels")
-    edge_pixels = np.argwhere(frame[:, :, 0] == 255)
+    edge_pixels = np.argwhere(frame[:, :, 0] == 255)#[::5]
     print(len(edge_pixels), "edge pixels detected")
 
     pointSet = {
         'x': [edge_pixels[:, 1].tolist()[i:i + 9999] for i in range(0, len(edge_pixels[:, 1].tolist()), 9999)], 
         'y': [(len(frame) - edge_pixels[:, 0]).tolist()[i:i + 9999] for i in range(0, len((len(frame) - edge_pixels[:, 0]).tolist()), 9999)]
     }
-
-    # pointSet = {'x': [], 'y': []}
-    # pointsX = []
-    # pointsY = []
-    
-    # for y in range(len(frame)):
-    #     for x in range(len(frame[y])):
-    #         if frame[y][x][0] == 255:
-    #             pointsX.append(x)
-    #             pointsY.append(len(frame) - y)
-
-    #         if len(pointsX) == 9999:
-    #             pointSet['x'].append(str(pointsX))
-    #             pointSet['y'].append(str(pointsY))
-    #             pointsX = []
-    #             pointsY = []
-
-    # pointSet['x'].append(str(pointsX))
-    # pointSet['y'].append(str(pointsY))
 
     print("pixels ready for graphing")
     return pointSet
