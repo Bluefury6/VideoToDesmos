@@ -16,7 +16,7 @@ frames = []
 
 frame_number = 0
 deltaFrame = 1
-video = "test_videos\\<example>.mp4"
+video = "test_videos\\Celeste 2022-07-20 16-51-19_Trim.mp4"
 capture = cv2.VideoCapture(video)
 
 fps = capture.get(cv2.CAP_PROP_FPS)
@@ -103,7 +103,7 @@ def loadImageForFrontend(frame):
 def end_recording():
     output_video.release()
 
-    return
+    return "recording complete"
 
 
 

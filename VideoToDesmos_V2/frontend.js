@@ -1,6 +1,6 @@
 const elt = document.getElementById('calculator');
 const calculator = Desmos.GraphingCalculator(elt, {lockViewport: true, expressions: false, settingsMenu: false});
-const videoSource = "..\\test_videos\\<example>.mp4";
+const videoSource = "..\\test_videos\\Celeste 2022-07-20 16-51-19_Trim.mp4";
 graphColor = "rgb(0, 0, 111)";
 // colors used in my example videos:
 // furina: (0, 0, 111), charlotte: (209, 29, 83), navia: (179, 119, 0), raiden: (128, 0, 128)
