@@ -16,7 +16,7 @@ frames = []
 
 frame_number = 0
 deltaFrame = 1
-video = "test_videos\\<insert video name here>.mp4"
+video = "test_videos\\<example>.mp4"
 capture = cv2.VideoCapture(video)
 
 fps = capture.get(cv2.CAP_PROP_FPS)
@@ -54,16 +54,19 @@ def initialize():
     currentTime = time();
     deltaTime = currentTime - startTime
     projectedTime = (deltaTime / 3600)/(frame_number / frame_count)
-
-    print(f"loading frame {frame_number} of {frame_count}, approx. {100*frame_number / frame_count}% complete.")
-    print(f"Elapsed Time: {deltaTime / 3600} hours. Projected total: {int(projectedTime)} hours {projectedTime % 1} minutes")
-
-    #grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    projectedRemaining = projectedTime - (deltaTime / 3600)
+    updateString = f"""
+    Loading frame #{frame_number} of {frame_count}, approx. {round(100*100*frame_number / frame_count) / 100}% complete. {round(100*(100 - (100*frame_number / frame_count))) / 100}% remaining.
+    Average time per frame process: {round(100*deltaTime / frame_number) / 100} seconds
+    Elapsed time: {int(deltaTime / 3600)} hour(s), {int(60*((deltaTime / 3600) % 1))} minutes, {int(60*(60*((deltaTime / 3600) % 1) % 1))} seconds. 
+    Projected total: {int(projectedTime)} hour(s), {int(60*(projectedTime % 1))} minutes, {int(60*(60*(projectedTime % 1) % 1))} seconds.
+    Projected remaining: {int(projectedRemaining)} hour(s), {int(60*(projectedRemaining % 1))} minutes, {int(60*(60*(projectedRemaining % 1) % 1))} seconds.
+"""
 
     edged_frame = cv2.Canny(frame, 50, 60)
     frame = cv2.cvtColor(edged_frame, cv2.COLOR_GRAY2BGR)
 
-    return jsonify({"image": compileToPoints(frame)})
+    return jsonify({"image": compileToPoints(frame), "updateInfo": updateString})
 
 
 
@@ -100,7 +103,7 @@ def loadImageForFrontend(frame):
 def end_recording():
     output_video.release()
 
-    return Flask.send_file(output_path, as_attachment=True)
+    return
 
 
 

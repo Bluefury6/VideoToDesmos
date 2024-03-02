@@ -1,7 +1,9 @@
 const elt = document.getElementById('calculator');
 const calculator = Desmos.GraphingCalculator(elt, {lockViewport: true, expressions: false, settingsMenu: false});
-const videoSource = "..\\test_videos\\Story Teaser_ La vaguelette _ Genshin Impact.mp4";
+const videoSource = "..\\test_videos\\<example>.mp4";
 graphColor = "rgb(0, 0, 111)";
+// colors used in my example videos:
+// furina: (0, 0, 111), charlotte: (209, 29, 83), navia: (179, 119, 0), raiden: (128, 0, 128)
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -41,7 +43,6 @@ const init = () => {
 
     video.addEventListener("loadeddata", () => {
         let videoInfo = document.getElementById("video").getBoundingClientRect();
-        //console.log(videoInfo);
 
         width = videoInfo["width"];
         height = videoInfo["height"];
@@ -77,6 +78,7 @@ const run = () => {
         } else if (data["image"] === "error") {
             run();
         } else {
+            document.getElementById("updateInfo").innerText = data["updateInfo"];
             loadFrame(data);
         }
     })
@@ -89,7 +91,6 @@ const run = () => {
 const loadFrame = (frame) => {
     calculator.setState(calculatorBlankState);
     calculator.clearHistory();
-    //console.log(frame['image']);
     for (let j = 0; j < frame['image']['x'].length; j++) {
         calculator.setExpression({id: "points" + j, latex: "([" + frame['image']['x'][j] + "], [" + frame['image']['y'][j] + "])", color: graphColor, pointSize: "2", pointOpacity: "1", secret: true, lines: false, lineWidth: 1, lineOpacity: 1});
     }
@@ -113,8 +114,6 @@ const returnFrame = (frame) => {
         })
         .then(response => response.json())
         .then(data => {
-            //console.log('Frame recieved');
-            console.log(data)
             run();
         })
         .catch(error => {
@@ -135,7 +134,6 @@ const finishRecording = () => {
     .then(response => response.json())
     .then(data => {
         console.log('Response:', data);
-        // You can handle the response data here
     })
     .catch(error => {
         console.error('Error:', error);
