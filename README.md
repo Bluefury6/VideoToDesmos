@@ -3,6 +3,7 @@ My system for converting videos to Desmos animations.
 Currently very hands-on usability.
 
 There are several example videos up on my YouTube channel here: [https://www.youtube.com/channel/UCdeWXcvguA3tBtnXbDQsoRw]
+This version should be considered the lower quality but faster version of my more recent rewrite, with full color rendering: [https://github.com/Bluefury6/DesmosPolygonalImages]
 
 This program can be used by performing the following steps:
 
